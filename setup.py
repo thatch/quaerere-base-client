@@ -60,8 +60,6 @@ class WriteRequirementsCommand(install):
 
 setup(name=PROJECT_NAME,
       version=PROJECT_RELEASE,
-      description='',
-      long_description=readme(),
       packages=find_packages(exclude=['docs', 'tests']),
       zip_safe=False,
       test_suite='tests',

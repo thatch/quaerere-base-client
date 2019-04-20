@@ -1,4 +1,7 @@
+__all__ = ['ModelBase']
+
 from marshmallow.fields import Field
+
 
 class ModelBase:
     def __init__(self):
