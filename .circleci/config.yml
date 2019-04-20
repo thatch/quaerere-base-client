@@ -34,10 +34,10 @@ commands:
             bumpversion << parameters.bump_options >> << parameters.version_part >>
             python3 setup.py --version
             git log -n 1
-      - run:
-          name: Push version bump
-          command: |
-            git push -u origin $CIRCLE_BRANCH
+      #- run:
+      #    name: Push version bump
+      #    command: |
+      #      git push -u origin $CIRCLE_BRANCH
 
 
   publish:
@@ -135,7 +135,7 @@ jobs:
       - checkout
       - bumpversion:
           version_part: dev_num
-      - publish
+      #- publish
 
   bump_publish_release:
     docker:
@@ -147,15 +147,15 @@ jobs:
       - checkout
       - bumpversion:
           version_part: pre_release_num
-      - publish
+      #- publish
 
   publish_prod_tag:
     docker:
       - image: circleci/python:3.7
     steps:
       - checkout
-      - publish:
-          verify_tag: true
+      #- publish:
+      #    verify_tag: true
 
 workflows:
   version: 2
@@ -172,26 +172,26 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - bump_publish_dev:
-          context: Test PyPI
-          requires:
-            - unittest_py37
-          filters:
-            branches:
-              only: develop
-      - bump_publish_release:
-          context: Prod PyPI
-          requires:
-            - unittest_py37
-          filters:
-            branches:
-              only: /^release\/.*/
-      - publish_prod_tag:
-          context: Prod PyPI
-          requires:
-            - unittest_py37
-          filters:
-            tags:
-              only: /^v[0-9]+(\.[0-9]+)+$/
-            branches:
-              ignore: /.*/
+      #- bump_publish_dev:
+      #    context: Test PyPI
+      #    requires:
+      #      - unittest_py37
+      #    filters:
+      #      branches:
+      #        only: develop
+      #- bump_publish_release:
+      #    context: Prod PyPI
+      #    requires:
+      #      - unittest_py37
+      #    filters:
+      #      branches:
+      #        only: /^release\/.*/
+      #- publish_prod_tag:
+      #    context: Prod PyPI
+      #    requires:
+      #      - unittest_py37
+      #    filters:
+      #      tags:
+      #        only: /^v[0-9]+(\.[0-9]+)+$/
+      #      branches:
+      #        ignore: /.*/
