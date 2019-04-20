@@ -8,8 +8,6 @@ from setuptools import find_packages, setup
 from setuptools.command.install import install
 
 PROJECT_NAME = 'quaerere-base-client'
-PROJECT_RELEASE = '0.1.0.dev0'
-PROJECT_VERSION = '.'.join(PROJECT_RELEASE.split('.')[:2])
 INSTALL_REQUIRES = [
     'marshmallow>=2.19.0,<3',
     'requests>=2.21.0', ]
@@ -23,6 +21,15 @@ TESTS_REQUIRES = [
     'pytest>=4.2.0',
     'pytest-cov>=2.6.0',
     'pytest-flake8', ]
+
+
+def get_version():
+    with open('VERSION') as f:
+        return f.readline().strip()
+
+
+PROJECT_RELEASE = get_version()
+PROJECT_VERSION = '.'.join(PROJECT_RELEASE.split('.')[:2])
 
 
 def readme():
