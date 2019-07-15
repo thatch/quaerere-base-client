@@ -6,8 +6,8 @@ import requests
 
 from .exceptions import APIStatusException
 
-_class_pattern = r'^(([A-Z][a-z]+)+)Schema$'
-_name_pattern = r'([A-Z][a-z]+)'
+_class_pattern = r'^(([A-Z]+[a-z]+)+)Schema$'
+_name_pattern = r'([A-Z]+[a-z]+)'
 _class_regex = re.compile(_class_pattern)
 _name_regex = re.compile(_name_pattern)
 
