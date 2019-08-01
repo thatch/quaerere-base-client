@@ -6,11 +6,6 @@ import requests
 
 from .exceptions import APIStatusException
 
-_class_pattern = r'^(([A-Z]+[a-z]+)+)Schema$'
-_name_pattern = r'([A-Z]+[a-z]+)'
-_class_regex = re.compile(_class_pattern)
-_name_regex = re.compile(_name_pattern)
-
 _default_good = [200, 201, ]
 
 
@@ -22,11 +17,16 @@ class Resource:
     schema_new = None
     base_url = None
     model_class = None
+    accessor_name = None
+    name_suffix = 'Schema'
 
     def __init__(self):
         if self.resource_schema is None:
             raise NotImplementedError('resource_schema must be defined.')
-        self._resource_name = None
+        if self.accessor_name is not None:
+            self._resource_name = self.accessor_name
+        else:
+            self._resource_name = None
         self._url_part = None
         self.schema_one = self.resource_schema(self.model_class)
         self.schema_many = self.resource_schema(self.model_class, many=True)
@@ -44,13 +44,13 @@ class Resource:
         :rtype: str
         """
         if self._resource_name is None:
-            name_match = _class_regex.fullmatch(self.resource_schema.__name__)
-            if name_match is None:
-                raise RuntimeError('class name "{}" does not match naming '
-                                   'requirements'.format(
-                    self.resource_schema.__name__))
-            self._resource_name = '_'.join(_name_regex.findall(
-                name_match.group(1))).lower()
+            name = self.resource_schema.__name__
+            if name.endswith(self.name_suffix):
+                name = name[:-len(self.name_suffix)]
+            first_cap_re = re.compile('(.)([A-Z][a-z]+)')
+            all_cap_re = re.compile('([a-z0-9])([A-Z])')
+            s1 = first_cap_re.sub(r'\1_\2', name)
+            self._resource_name = all_cap_re.sub(r'\1_\2', s1).lower()
 
         return self._resource_name
 
