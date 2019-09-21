@@ -1,26 +1,30 @@
 #!/usr/bin/env python
-"""
+"""Setup for quaerere-base-client
 """
 import os
+import re
 import sys
 
-from setuptools import find_packages, setup
+from setuptools import setup
 from setuptools.command.install import install
 
 PROJECT_NAME = 'quaerere-base-client'
 INSTALL_REQUIRES = [
     'marshmallow<3,>=2.19.0',
-    'requests>=2.21.0', ]
+    'requests>=2.21.0',
+]
 SETUP_REQUIRES = [
     'pytest-runner',
     'Sphinx<2,>=1.8.0',
     'sphinx-rtd-theme',
     'setuptools',
-    'wheel', ]
+    'wheel',
+]
 TESTS_REQUIRES = [
     'pytest>=4.2.0',
     'pytest-cov>=2.6.0',
-    'pytest-flake8', ]
+    'pytest-flake8',
+]
 
 
 def get_version():
@@ -44,6 +48,10 @@ class VerifyVersionCommand(install):
     description = 'verify that the git tag matches our version'
 
     def run(self):
+        release_regex = re.compile(r'^[0-9]+\.[0-9]+\.[0-9]+$')
+        if not release_regex.match(PROJECT_RELEASE):
+            sys.exit(0)
+
         tag = os.getenv('CIRCLE_TAG')
 
         if tag != 'v' + PROJECT_RELEASE:
@@ -67,10 +75,7 @@ class WriteRequirementsCommand(install):
 
 setup(name=PROJECT_NAME,
       version=PROJECT_RELEASE,
-      packages=find_packages(exclude=['docs', 'tests']),
-      zip_safe=False,
       test_suite='tests',
-      python_requires='~=3.6',
       install_requires=INSTALL_REQUIRES,
       setup_requires=SETUP_REQUIRES,
       tests_require=TESTS_REQUIRES,
