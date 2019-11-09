@@ -1,5 +1,7 @@
 __all__ = ['API']
 
+from urllib.parse import urljoin
+
 class API:
     def __init__(self, version):
         self.base_url = None
@@ -20,4 +22,4 @@ class API:
     def update(self, base_url):
         self.base_url = base_url
         for resource in self._resources:
-            resource.register(base_url + '/' + self.version)
+            resource.register(urljoin(base_url, self.version + '/'))

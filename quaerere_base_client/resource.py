@@ -1,6 +1,7 @@
 __all__ = ['Resource']
 
 import re
+from urllib.parse import urljoin
 
 import requests
 
@@ -73,7 +74,7 @@ class Resource:
 
     def _request(self, method, url_part,
                  good_status=None, json=None, params=None):
-        url = self.base_url + '/' + url_part
+        url = urljoin(self.base_url, url_part)
         if good_status is None:
             good_status = _default_good
         resp = requests.request(method, url, json=json, params=params)
@@ -100,7 +101,7 @@ class Resource:
         :return: resource object
         :rtype: dict
         """
-        raw = self._request('GET', self.url_part + f'{id}', [200])
+        raw = self._request('GET', urljoin(self.url_part, str(id)), [200])
         unmarshal = self.schema_one.load(raw)
         return unmarshal.data
 
@@ -124,7 +125,7 @@ class Resource:
         :return:
         """
         new_data = self.schema_one.dump(data)
-        raw = self._request('PUT', self.url_part + f'{id}', [201],
+        raw = self._request('PUT', urljoin(self.url_part, str(id)), [201],
                             json=new_data)
         unmarshal = self.schema_new.load(raw)
         return unmarshal.data
@@ -137,7 +138,7 @@ class Resource:
         :return:
         """
         new_data = self.schema_one.dump(data)
-        raw = self._request('PATCH', self.url_part + f'{id}', [201],
+        raw = self._request('PATCH', urljoin(self.url_part, str(id)), [201],
                             json=new_data)
         unmarshal = self.schema_new.load(raw)
         return unmarshal.data
@@ -148,7 +149,7 @@ class Resource:
         :param id: Identifier of an object
         :return:
         """
-        raw = self._request('DELETE', self.url_part + f'{id}', [202])
+        raw = self._request('DELETE', urljoin(self.url_part, str(id)), [202])
         unmarshal = self.schema_one.load(raw)
         return unmarshal.data
 
@@ -176,7 +177,7 @@ class Resource:
             params.append(('sort', sort))
         if limit is not None:
             params.append(('limit', limit))
-        raw = self._request('GET', self.url_part + 'find/', params=params)
+        raw = self._request('GET', urljoin(self.url_part, 'find'), params=params)
         # TODO: Create/use query schema and load entire payload
         unmarshal = self.schema_many.load(raw['result'])
         return unmarshal.data
